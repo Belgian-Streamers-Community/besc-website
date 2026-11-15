@@ -1,3 +1,4 @@
+import * as websiteStructure from "../src/lib/website-structure.ts";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -12,7 +13,7 @@ const native=createRequire(import.meta.url);
 function load(file:string,mocks:Record<string,unknown>,env:Record<string,string>,extra:Record<string,unknown>={}){
  const module={exports:{} as Record<string,CallableFunction>};
  const code=ts.transpileModule(readFileSync(new URL(file,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
- runInNewContext(code,{URL,AbortSignal,Buffer,module,exports:module.exports,process:{env},require:(key:string)=>key in mocks?mocks[key]:native(key),...extra});return module.exports;
+ runInNewContext(code,{URL,AbortSignal,Buffer,module,exports:module.exports,process:{env},require:(key:string)=>key in mocks?mocks[key]:key==='@/lib/website-structure'?websiteStructure:key==='@/lib/website-experience'?{experienceEnabled:()=>false}:key==='./website-shell'?{WebsiteShell:()=>{throw Error('new_experience_disabled');}}:key==='@/lib/website-data'?{websiteHome:()=>{throw Error('new_experience_disabled');}}:key==='@/components/website-home'?{WebsiteHomeView:()=>{throw Error('new_experience_disabled');}}:native(key),...extra});return module.exports;
 }
 const production={NODE_ENV:'production',BESC_DEPLOYMENT_ENV:'production',BESC_WEBSITE_URL:'https://site.example.test',BESC_CC_URL:'https://cc.example.test',BESC_APPROVED_PRODUCTION_WEBSITE_ORIGIN:'https://site.example.test',BESC_APPROVED_PRODUCTION_CC_ORIGIN:'https://cc.example.test'};
 

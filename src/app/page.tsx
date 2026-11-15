@@ -1,3 +1,6 @@
+import {experienceEnabled} from "@/lib/website-experience";
+import {websiteHome} from "@/lib/website-data";
+import {WebsiteHomeView} from "@/components/website-home";
 import {publicMetadata} from '@/lib/seo';
 import {PageContent} from '@/components/page-content';
 import {Shell} from '@/components/shell';
@@ -7,6 +10,7 @@ import {ContentFailure} from '@/lib/content';
 import {releasePreviewEnabled,publicWebsiteEnabled} from '@/lib/deployment-config';
 export const dynamic='force-dynamic';
 export default async function Page(){
+ if(experienceEnabled())return <Shell><WebsiteHomeView initial={await websiteHome()}/></Shell>;
  if(!releasePreviewEnabled(process.env)&&!publicWebsiteEnabled(process.env))return <PageContent path="news" title="De laatste verhalen" home/>;
  let data;
  try{data=await pages('pages/home','?locale=nl-BE');}
