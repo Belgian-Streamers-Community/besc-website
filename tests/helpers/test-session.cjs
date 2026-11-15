@@ -1,0 +1,3 @@
+function fixtureSession(){const encode=value=>Buffer.from(JSON.stringify(value)).toString('base64url');const now=Math.floor(Date.now()/1000);const token=encode({alg:'HS256',typ:'JWT'})+'.'+encode({sub:'00000000-0000-4000-8000-000000000201',role:'authenticated',aud:'authenticated',iat:now,exp:now+3600,session_id:'00000000-0000-4000-8000-000000000202'})+'.TESTFIXTURE';return 'base64-'+encode({access_token:token,refresh_token:'TESTFIXTURE-refresh',expires_at:now+3600,expires_in:3600,token_type:'bearer',user:{id:'00000000-0000-4000-8000-000000000201',aud:'authenticated',role:'authenticated',email:'testfixture@example.invalid',app_metadata:{},user_metadata:{},created_at:'2026-01-01T00:00:00Z'}});}
+
+module.exports={fixtureSession};

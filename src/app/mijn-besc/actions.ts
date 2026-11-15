@@ -7,7 +7,7 @@ import {writeCreator} from '@/lib/creator-data';
 import {parseCreatorOperation,creatorFields} from '@/lib/creator-contract';
 import {ContentFailure} from '@/lib/content';
 export async function ownCreatorAction(form:FormData){
- const route='/mijn-besc';if(process.env.BESC_CREATOR_PLATFORM_ENABLED!=='true'||(await headers()).get('origin')!==websiteUrl())redirect(route+'?melding=controle');
+ const route=process.env.BESC_WEBSITE_EXPERIENCE_ENABLED==='true'?'/mijn-besc/profiel':'/mijn-besc';if(process.env.BESC_CREATOR_PLATFORM_ENABLED!=='true'||(await headers()).get('origin')!==websiteUrl())redirect(route+'?melding=controle');
  const operation=String(form.get('operation')??''),request=String(form.get('request_id')??'');let data:unknown;
  if(operation==='profile.save'){
   const payload:Record<string,unknown>={slug:String(form.get('slug')??'').trim(),locale:String(form.get('locale')??'nl-BE'),display_name:String(form.get('display_name')??'').trim(),bio:String(form.get('bio')??'').trim(),platform_links:['twitch','youtube','kick','tiktok'].flatMap(platform=>{const url=String(form.get(platform)??'').trim();return url?[{platform,url}]:[]}),disciplines:String(form.get('disciplines')??'').split(',').map(s=>s.trim()).filter(Boolean),languages:String(form.get('languages')??'').split(',').map(s=>s.trim()).filter(Boolean)};

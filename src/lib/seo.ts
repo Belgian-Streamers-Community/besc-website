@@ -33,7 +33,7 @@ export async function publicMetadata(path: string, query: {locale?:string; curso
       title = data.title; description = data.summary;
     } else {
       f2ListSchema.parse(await read(list!, '?locale=nl-BE&limit=1'));
-      title = list === 'news' ? 'Nieuws uit de community' : 'Events van BESC';
+      title = list === 'news' ? 'Nieuws & BESC-blog' : 'Events van BESC';
       description = list === 'news' ? 'Vrijgegeven nieuws van Belgian Streamers Community.' : 'Vrijgegeven events van Belgian Streamers Community.';
     }
     const canonical = new URL(path, websiteOrigin(env)).href;

@@ -1,3 +1,4 @@
+import {safeWebsiteReturn} from "./website-structure";
 import {websiteOrigin} from './deployment-config';
 import 'server-only';
 import {createServerClient} from '@supabase/ssr';
@@ -8,8 +9,9 @@ export async function authClient(signal?:AbortSignal){
  if(!url||!key)throw Error('auth_unavailable');
  return createServerClient(url,key,{global:{fetch:(input,init)=>fetch(input,{...init,cache:'no-store',signal:AbortSignal.any([signal??AbortSignal.timeout(5000),...(init?.signal?[init.signal]:[])])})},auth:{flowType:'pkce'},cookieOptions:{name:'besc-website-auth',httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',path:'/'},cookies:{getAll:()=>jar.getAll(),setAll(items){try{for(const {name,value,options}of items)jar.set(name,value,{...options,domain:undefined});}catch{/* Proxy persists refresh cookies before rendering. */}}}});
 }
-export async function viewerToken(signal?:AbortSignal){
- const db=await authClient(signal);const {data,error}=await db.auth.getUser();if(error||!data.user||data.user.is_anonymous)redirect('/login');
- const {data:session}=await db.auth.getSession();if(!session.session?.access_token)redirect('/login');return session.session.access_token;
+export async function viewerToken(signal?:AbortSignal,returnTo?:string){
+ const loginPath=returnTo?"/login?next="+encodeURIComponent(safeWebsiteReturn(returnTo)):"/login";
+ const db=await authClient(signal);const {data,error}=await db.auth.getUser();if(error||!data.user||data.user.is_anonymous)redirect(loginPath);
+ const {data:session}=await db.auth.getSession();if(!session.session?.access_token)redirect(loginPath);return session.session.access_token;
 }
 export function websiteUrl(){return websiteOrigin(process.env);}
