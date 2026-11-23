@@ -17,10 +17,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bepaal imagenaam (GHCR vereist kleine letters)
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
       - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/missrinam80-besc/besc-website:dev
-            ghcr.io/missrinam80-besc/besc-website:${{ github.sha }}
+            ${{ steps.image.outputs.name }}:dev
+            ${{ steps.image.outputs.name }}:${{ github.sha }}
